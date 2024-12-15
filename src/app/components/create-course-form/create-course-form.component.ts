@@ -6,6 +6,8 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NgIf } from '@angular/common';
+import { doc, Firestore, setDoc } from '@angular/fire/firestore';
+import { Course } from '../../types';
 
 @Component({
   selector: 'app-create-course-form',
@@ -18,6 +20,9 @@ export class CreateCourseFormComponent {
   courseForm!: FormGroup;
   fb = inject(FormBuilder);
   @Output() formSubmit = new EventEmitter<void>();
+
+  firestore = inject(Firestore);
+
   constructor() {
     this.courseForm = this.fb.group({
       title: ['', Validators.required],
@@ -26,5 +31,13 @@ export class CreateCourseFormComponent {
     });
   }
 
-  onSubmit() {}
+  async onSubmit() {
+    const course: Course = {
+      ...this.courseForm.value,
+      id: self.crypto.randomUUID(),
+    };
+    const docRef = doc(this.firestore, `courses/${course.id}`);
+    await setDoc(docRef, course);
+    this.formSubmit.emit();
+  }
 }

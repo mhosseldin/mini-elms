@@ -5,7 +5,13 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Course } from '../../types';
+import { Course, Lecture } from '../../types';
+import {
+  doc,
+  Firestore,
+  serverTimestamp,
+  setDoc,
+} from '@angular/fire/firestore';
 @Component({
   selector: 'app-create-lecture-form',
   standalone: true,
@@ -18,6 +24,7 @@ export class CreateLectureFormComponent {
   fb = inject(FormBuilder);
   @Input() course!: Course;
   @Output() formSubmit = new EventEmitter<void>();
+  firestore = inject(Firestore);
 
   constructor() {
     this.lectureForm = this.fb.group({
@@ -27,5 +34,19 @@ export class CreateLectureFormComponent {
     });
   }
 
-  onSubmit() {}
+  async onSubmit() {
+    const lecture: Lecture = {
+      ...this.lectureForm.value,
+      id: self.crypto.randomUUID(),
+    };
+    const docRef = doc(
+      this.firestore,
+      `courses/${this.course.id}/lectures/${lecture.id}`
+    );
+    await setDoc(docRef, {
+      ...lecture,
+      cts: serverTimestamp(),
+    });
+    this.formSubmit.emit();
+  }
 }
