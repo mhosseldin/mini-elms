@@ -8,6 +8,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NgIf } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -25,6 +26,7 @@ export class RegisterComponent {
   private firestore = inject(Firestore);
 
   successMessage: string = '';
+  private router = inject(Router);
 
   constructor() {
     this.userForm = this.fb.group({
@@ -34,7 +36,6 @@ export class RegisterComponent {
       role: ['', Validators.required],
     });
   }
-
   onSubmit() {
     if (this.userForm.valid) {
       const formData = this.userForm.value;
@@ -45,15 +46,43 @@ export class RegisterComponent {
           const user = userCredential.user;
 
           // Save additional user data in Firestore using UID as document ID
-          setDoc(doc(this.firestore, 'users', user.uid), {
+          const userDocRef = doc(this.firestore, 'users', user.uid);
+          setDoc(userDocRef, {
             username: formData.username,
             email: formData.email,
             role: formData.role,
+            registeredCourses: [], // Initialize empty courses
           }).then(() => {
             console.log('User registered and data saved to Firestore!');
-            this.formSubmit.emit(); // Notify parent component
+
+            // Check if the user is a student before creating studentProgress
+            if (formData.role === 'student') {
+              const progressDocRef = doc(
+                this.firestore,
+                'studentProgress',
+                user.uid // Use user.uid as the document ID
+              );
+
+              setDoc(progressDocRef, {
+                studentId: user.uid,
+                courseId: '', // Initialize as empty
+                watchedLectures: [],
+                progress: '0',
+                assignmentUrls: [],
+                grade: 'N/A',
+              }).then(() => {
+                console.log(
+                  'Empty studentProgress document created for student!'
+                );
+              });
+            }
+
             this.successMessage = 'Your account has been created successfully!';
+            this.formSubmit.emit(); // Notify parent component
             this.userForm.reset(); // Reset the form
+
+            // Redirect to homepage
+            this.router.navigate(['']);
           });
         })
         .catch((error) => {
