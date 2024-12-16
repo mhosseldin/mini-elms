@@ -1,0 +1,79 @@
+<div class="h-screen flex items-center justify-center">
+  <div class="w-full max-w-[500px]">
+    <!-- Success Message -->
+    <div
+      *ngIf="successMessage"
+      class="mb-4 p-3 text-green-700 bg-green-100 rounded-md text-center"
+    >
+      {{ successMessage }}
+    </div>
+
+    <!-- Registration Form -->
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- Username -->
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700"
+          >Username</label
+        >
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="py-2 px-3 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700"
+          >Email Address</label
+        >
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="py-2 px-3 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="passwd" class="block text-sm font-medium text-gray-700"
+          >Password</label
+        >
+        <input
+          type="password"
+          id="passwd"
+          formControlName="passwd"
+          class="py-2 px-3 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <!-- Role -->
+      <div>
+        <label for="role" class="block text-sm font-medium text-gray-700"
+          >Profession</label
+        >
+        <select
+          id="role"
+          formControlName="role"
+          class="py-2 px-3 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="instructor">Instructor</option>
+          <option value="student">Student</option>
+        </select>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center mt-4">
+        <button
+          type="submit"
+          [disabled]="!userForm.valid"
+          class="w-full py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          Register
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
