@@ -1,0 +1,89 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-center mb-6">Welcome, {{ userName }}</h1>
+
+  <!-- Show Loading State -->
+  <div *ngIf="isLoading" class="text-center">Loading...</div>
+
+  <!-- Student Profile -->
+  <div
+    *ngIf="userRole === 'student' && !isLoading"
+    class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6"
+  >
+    <h2 class="text-2xl font-semibold mb-4">Student Profile</h2>
+    <table class="w-full border-collapse border border-gray-200">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border px-4 py-2 text-left">Registered Course</th>
+          <th class="border px-4 py-2 text-left">Progress</th>
+          <th class="border px-4 py-2 text-left">Submit Assignment</th>
+          <th class="border px-4 py-2 text-left">Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let course of registeredCourses">
+          <td class="border px-4 py-2">{{ course.courseTitle }}</td>
+          <td class="border px-4 py-2">{{ course.progress }}</td>
+          <td class="border px-4 py-2">
+            <button
+              (click)="submitAssignment(course.courseId)"
+              class="bg-blue-500 text-white px-4 py-1 rounded"
+            >
+              Submit
+            </button>
+          </td>
+          <td class="border px-4 py-2">{{ course.grade }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Instructor Profile -->
+  <div
+    *ngIf="userRole === 'instructor' && !isLoading"
+    class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6"
+  >
+    <h2 class="text-2xl font-semibold mb-4">Instructor Profile</h2>
+    <table class="w-full border-collapse border border-gray-200">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border px-4 py-2 text-left">Course Name</th>
+          <th class="border px-4 py-2 text-left">Students</th>
+          <th class="border px-4 py-2 text-left">Students Progress</th>
+          <th class="border px-4 py-2 text-left">Assignments</th>
+          <th class="border px-4 py-2 text-left">Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let course of registeredCourses">
+          <tr *ngFor="let student of course.students">
+            <td class="border px-4 py-2">{{ course.courseTitle }}</td>
+            <td class="border px-4 py-2">{{ student.studentName }}</td>
+            <td class="border px-4 py-2">{{ student.progress }}</td>
+            <td class="border px-4 py-2">
+              <ul class="space-y-2">
+                <li *ngFor="let url of student.assignmentUrls; let i = index">
+                  <a
+                    [href]="url"
+                    target="_blank"
+                    class="text-blue-500 no-underline hover:underline inline-block"
+                  >
+                    Assignment #{{ i + 1 }}
+                  </a>
+                </li>
+              </ul>
+            </td>
+            <td class="border px-4 py-2">
+              {{ student.grade }}
+              <button
+                (click)="setGrade(student.studentId, course.courseId)"
+                class="bg-blue-500 text-white px-4 py-1 rounded ml-2"
+              >
+                Set/Edit grade
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -4,6 +4,7 @@
 >
   <div class="relative">
     <button
+      *ngIf="!(userRole === 'student')"
       (click)="editCourseImg($event)"
       class="absolute top-0 right-0 p-2 rounded-md hover:bg-slate-700 bg-slate-900 text-white"
     >

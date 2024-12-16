@@ -1,22 +1,27 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Course } from '../../types';
 import { FilestackService } from '../../services/filestack.service';
 import { PickerFileMetadata, PickerOptions } from 'filestack-js';
 import { File } from 'filestack-js/build/main/lib/api/upload';
-import { doc, Firestore, updateDoc } from '@angular/fire/firestore';
+import { doc, Firestore, getDoc, updateDoc } from '@angular/fire/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-course-card',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgIf],
   templateUrl: './course-card.component.html',
   styleUrl: './course-card.component.css',
 })
-export class CourseCardComponent {
+export class CourseCardComponent implements OnInit {
   @Input() course!: Course;
   image: PickerFileMetadata | null = null;
   firestore = inject(Firestore);
   filestack = inject(FilestackService);
+  userRole: string | null = null;
+  auth = inject(Auth);
+
   editCourseImg(event: Event) {
     event.stopPropagation();
     const options: PickerOptions = {
@@ -49,5 +54,19 @@ export class CourseCardComponent {
       return;
     }
     await this.filestack.deleteFile(handle);
+  }
+
+  ngOnInit(): void {
+    // Fetch current user's role
+    onAuthStateChanged(this.auth, async (user) => {
+      if (user) {
+        const userDocRef = doc(this.firestore, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          this.userRole = userDocSnap.data()['role']; // Fetch the role from Firestore
+        }
+      }
+    });
   }
 }

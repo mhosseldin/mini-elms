@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ModalComponent } from '../components/modal/modal.component';
 import { CreateLectureFormComponent } from '../components/create-lecture-form/create-lecture-form.component';
 import { Observable } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { LectureListItemComponent } from '../components/lecture-list-item/lecture-list-item.component';
 import { LoaderComponent } from '../components/loader/loader.component';
 import { COURSES, LECTURES } from '../dummy-data';
@@ -17,6 +17,7 @@ import {
   orderBy,
   query,
 } from '@angular/fire/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-course-detail',
@@ -27,6 +28,7 @@ import {
     AsyncPipe,
     LectureListItemComponent,
     LoaderComponent,
+    NgIf,
   ],
   templateUrl: './course-detail.component.html',
   styleUrl: './course-detail.component.css',
@@ -38,6 +40,9 @@ export class CourseDetailComponent implements OnInit {
   isCreateLectureModalOpen = false;
   activateRoute = inject(ActivatedRoute);
   firestore = inject(Firestore);
+  userRole: string | null = null;
+  auth = inject(Auth);
+
   ngOnInit(): void {
     const id = this.activateRoute.snapshot.paramMap.get('id') as string;
     const lectureRef = query(
@@ -46,6 +51,18 @@ export class CourseDetailComponent implements OnInit {
     );
     this.getCourse(id);
     this.lectures$ = collectionData(lectureRef) as Observable<Lecture[]>;
+
+    // Fetch current user's role
+    onAuthStateChanged(this.auth, async (user) => {
+      if (user) {
+        const userDocRef = doc(this.firestore, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          this.userRole = userDocSnap.data()['role']; // Fetch the role from Firestore
+        }
+      }
+    });
   }
   async getCourse(id: string) {
     this.isLoadingCourse = true;

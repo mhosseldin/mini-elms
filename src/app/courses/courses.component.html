@@ -16,8 +16,10 @@
   </div>
 </section>
 
+<!-- Create Course Button (Visible Only for Instructors) -->
 <div class="container px-5 py-2 mx-auto flex items-center justify-end">
   <button
+    *ngIf="!(userRole === 'student')"
     (click)="isCreateCourseModalOpen = true"
     class="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 font-bold py-2 px-4 rounded"
   >
@@ -49,6 +51,8 @@
     </div>
   </div>
 </section>
+
+<!-- Create Course Modal -->
 <app-modal
   [showModal]="isCreateCourseModalOpen"
   (closeModal)="isCreateCourseModalOpen = false"

@@ -94,6 +94,7 @@
       />
     </svg>
     <svg
+      *ngIf="!(userRole === 'student')"
       (click)="uploadLectureVideo($event)"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -110,6 +111,7 @@
     </svg>
     } @else {
     <svg
+      *ngIf="!(userRole === 'student')"
       (click)="uploadLectureVideo($event)"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -139,6 +141,7 @@
   <video
     class="w-full aspect-video"
     src="{{ lecture.videoUrl }}"
+    (play)="markLectureAsWatched()"
     controls
   ></video>
   }
