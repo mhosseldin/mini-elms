@@ -61,63 +61,6 @@ export class UserPageComponent implements OnInit {
     });
   }
 
-  // async fetchRegisteredCourses(courseIds: string[], userId: string) {
-  //   const progressPromises = courseIds.map((courseId: string) => {
-  //     return (async () => {
-  //       const progressQuery = query(
-  //         collection(this.firestore, 'studentProgress'),
-  //         where('studentId', '==', userId),
-  //         where('courseId', '==', courseId)
-  //       );
-  //       const progressSnap = await getDocs(progressQuery);
-
-  //       const courseTitle = await this.getCourseTitle(courseId);
-  //       const totalLectures = await this.getTotalLectures(courseId);
-
-  //       let watchedLecturesCount = 0;
-  //       let grade = 'N/A';
-
-  //       if (!progressSnap.empty) {
-  //         const filteredDocs = progressSnap.docs.filter((doc) => {
-  //           const data = doc.data();
-  //           return data['studentId'] === this.userId; // Ensure it's the right student
-  //         });
-
-  //         if (filteredDocs.length > 0) {
-  //           const progressData = filteredDocs[0].data();
-  //           console.log('Watched Lectures:', progressData['watchedLectures']);
-
-  //           watchedLecturesCount = progressData['watchedLectures']
-  //             ? progressData['watchedLectures'].length
-  //             : 0;
-  //           grade = progressData['grade'] || 'N/A';
-  //         }
-  //       }
-
-  //       const progressPercentage =
-  //         totalLectures > 0
-  //           ? ((watchedLecturesCount / totalLectures) * 100).toFixed(0) + '%'
-  //           : '0%';
-
-  //       console.log({
-  //         courseId,
-  //         watchedLecturesCount,
-  //         totalLectures,
-  //         progressPercentage,
-  //       });
-
-  //       return {
-  //         courseId,
-  //         courseTitle,
-  //         progress: progressPercentage,
-  //         grade: grade,
-  //       };
-  //     })();
-  //   });
-
-  //   this.registeredCourses = (await Promise.all(progressPromises)).flat();
-  // }
-
   async fetchRegisteredCourses(courseIds: string[], userId: string) {
     const progressPromises = courseIds.map((courseId: string) => {
       return (async () => {
@@ -174,6 +117,7 @@ export class UserPageComponent implements OnInit {
           courseTitle,
           progress: '0%',
           grade: 'N/A',
+          assignmentUrls: [],
         };
       })();
     });

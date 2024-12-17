@@ -94,7 +94,7 @@
       />
     </svg>
     <svg
-      *ngIf="!(userRole === 'student')"
+      *ngIf="userRole === 'instructor' || userRole === 'admin'"
       (click)="uploadLectureVideo($event)"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -111,7 +111,7 @@
     </svg>
     } @else {
     <svg
-      *ngIf="!(userRole === 'student')"
+      *ngIf="userRole === 'instructor' || userRole === 'admin'"
       (click)="uploadLectureVideo($event)"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
