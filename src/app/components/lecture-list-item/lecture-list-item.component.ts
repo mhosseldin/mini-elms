@@ -117,13 +117,9 @@ export class LectureListItemComponent implements OnInit {
         });
       }
     } else {
-      const progressDocRef = doc(collection(this.firestore, 'studentProgress'));
-      await setDoc(progressDocRef, {
-        studentId: this.userId,
-        courseId: this.course.id,
-        watchedLectures: [this.lecture.id],
-        grade: 'N/A',
-      });
+      console.warn(
+        'No existing studentProgress document found. Unable to mark lecture as watched.'
+      );
     }
   }
 }

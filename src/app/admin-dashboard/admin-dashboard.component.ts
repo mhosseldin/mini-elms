@@ -14,6 +14,7 @@ import {
   setDoc,
   query,
   where,
+  getDoc,
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
@@ -210,14 +211,49 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   // Methods for Firebase
-  async setInstructor(courseId: string, userId: string) {
-    const userRef = doc(this.firestore, 'users', userId);
+  async setInstructor(courseId: string, newInstructorId: string) {
+    // Step 1: Find the current instructor of the course
     const courseRef = doc(this.firestore, 'courses', courseId);
+    const courseSnap = await getDoc(courseRef);
 
-    await updateDoc(courseRef, { instructorId: userId });
-    await updateDoc(userRef, {
-      registeredCourses: arrayUnion(courseId),
-    });
+    if (!courseSnap.exists()) {
+      console.error('Course does not exist.');
+      return;
+    }
+
+    const currentInstructorId = courseSnap.data()['instructorId'];
+
+    try {
+      // Step 2: Remove the courseId from the current instructor's registeredCourses
+      if (currentInstructorId) {
+        const currentInstructorRef = doc(
+          this.firestore,
+          'users',
+          currentInstructorId
+        );
+        await updateDoc(currentInstructorRef, {
+          registeredCourses: arrayRemove(courseId),
+        });
+        console.log(
+          `Removed course ${courseId} from previous instructor ${currentInstructorId}.`
+        );
+      }
+
+      // Step 3: Assign the new instructor to the course
+      await updateDoc(courseRef, { instructorId: newInstructorId });
+
+      // Step 4: Add the courseId to the new instructor's registeredCourses
+      const newInstructorRef = doc(this.firestore, 'users', newInstructorId);
+      await updateDoc(newInstructorRef, {
+        registeredCourses: arrayUnion(courseId),
+      });
+
+      console.log(
+        `Assigned course ${courseId} to new instructor ${newInstructorId}.`
+      );
+    } catch (error) {
+      console.error('Error assigning instructor:', error);
+    }
   }
 
   async setStudent(userId: string, courseId: string) {
