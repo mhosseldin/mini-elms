@@ -113,7 +113,10 @@
   <!-- Users Table -->
   <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
     <h2 class="text-2xl font-semibold mb-4">User Management</h2>
-    <button class="bg-green-500 text-white px-4 py-2 rounded mb-4">
+    <button
+      (click)="navigateToRegister()"
+      class="bg-green-500 text-white px-4 py-2 rounded mb-4"
+    >
       Add User
     </button>
     <table class="w-full border-collapse border border-gray-200">
@@ -130,7 +133,10 @@
           <td class="border px-4 py-2">{{ user.username }}</td>
           <td class="border px-4 py-2">{{ user.role }}</td>
           <td class="border px-4 py-2">
-            <button class="bg-red-500 text-white px-4 py-1 rounded">
+            <button
+              (click)="deleteUser(user.id)"
+              class="bg-red-500 text-white px-4 py-1 rounded"
+            >
               Delete
             </button>
           </td>

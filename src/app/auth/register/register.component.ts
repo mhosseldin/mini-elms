@@ -24,9 +24,9 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   private auth = inject(Auth);
   private firestore = inject(Firestore);
+  private router = inject(Router);
 
   successMessage: string = '';
-  private router = inject(Router);
 
   constructor() {
     this.userForm = this.fb.group({
@@ -36,6 +36,7 @@ export class RegisterComponent {
       role: ['', Validators.required],
     });
   }
+
   onSubmit() {
     if (this.userForm.valid) {
       const formData = this.userForm.value;
@@ -54,28 +55,6 @@ export class RegisterComponent {
             registeredCourses: [], // Initialize empty courses
           }).then(() => {
             console.log('User registered and data saved to Firestore!');
-
-            // Check if the user is a student before creating studentProgress
-            if (formData.role === 'student') {
-              const progressDocRef = doc(
-                this.firestore,
-                'studentProgress',
-                user.uid // Use user.uid as the document ID
-              );
-
-              setDoc(progressDocRef, {
-                studentId: user.uid,
-                courseId: '', // Initialize as empty
-                watchedLectures: [],
-                progress: '0',
-                assignmentUrls: [],
-                grade: 'N/A',
-              }).then(() => {
-                console.log(
-                  'Empty studentProgress document created for student!'
-                );
-              });
-            }
 
             this.successMessage = 'Your account has been created successfully!';
             this.formSubmit.emit(); // Notify parent component
