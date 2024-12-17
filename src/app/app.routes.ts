@@ -1,4 +1,32 @@
+import { inject } from '@angular/core';
+import { getAuth, onAuthStateChanged } from '@angular/fire/auth';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Routes } from '@angular/router';
+
+// Custom Route Guard to check if user is an admin
+const adminGuard = async () => {
+  const auth = getAuth();
+  const firestore = inject(Firestore);
+
+  return new Promise((resolve) => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(firestore, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists() && userSnap.data()['role'] === 'admin') {
+          resolve(true);
+        } else {
+          alert('Access Denied: Admins Only');
+          resolve(false);
+        }
+      } else {
+        alert('Please log in to access this page.');
+        resolve(false);
+      }
+    });
+  });
+};
 
 export const routes: Routes = [
   {
@@ -36,5 +64,13 @@ export const routes: Routes = [
       import('./user-page/user-page.component').then(
         (m) => m.UserPageComponent
       ),
+  },
+  {
+    path: 'admin-dashboard',
+    loadComponent: () =>
+      import('./admin-dashboard/admin-dashboard.component').then(
+        (m) => m.AdminDashboardComponent
+      ),
+    canActivate: [adminGuard],
   },
 ];

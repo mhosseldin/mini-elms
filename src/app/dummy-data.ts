@@ -6,12 +6,22 @@ export const COURSES: Course[] = [
     description: 'The best Angular course ever',
     id: '1',
     category: 'angular',
+    instructorId: '',
+    instructorName: '',
+    students: [],
+    selectedInstructorId: '',
+    selectedStudentId: '',
   },
   {
     title: 'NextJS',
     description: 'The best Next 14 course ever',
     id: '2',
     category: 'react',
+    instructorId: '',
+    instructorName: '',
+    students: [],
+    selectedInstructorId: '',
+    selectedStudentId: '',
   },
 ];
 

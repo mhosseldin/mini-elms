@@ -5,7 +5,6 @@ import { CreateCourseFormComponent } from '../components/create-course-form/crea
 import { AsyncPipe, NgIf } from '@angular/common';
 import { LoaderComponent } from '../components/loader/loader.component';
 import { Course } from '../types';
-import { COURSES } from '../dummy-data';
 import {
   collection,
   collectionData,

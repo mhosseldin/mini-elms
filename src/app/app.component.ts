@@ -16,6 +16,7 @@ export class AppComponent {
   isLoggedIn: boolean = false; // State to track user's login status
   private auth = inject(Auth);
   private router = inject(Router);
+  userRole: string = '';
 
   constructor() {
     // Listen to the Firebase Auth state
