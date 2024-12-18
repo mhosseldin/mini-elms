@@ -32,26 +32,26 @@ export class UserPageComponent implements OnInit {
   registeredCourses: any[] = [];
   isLoading = true;
 
-  ngOnInit() {
-    onAuthStateChanged(this.auth, async (user) => {
+  ngOnInit() {  // an interface should be implemented 
+    onAuthStateChanged(this.auth, async (user) => { // get the record from the database and deal with it according to the role 
       if (user) {
         this.userId = user.uid;
-        const userRef = doc(this.firestore, 'users', user.uid);
-        const userSnap = await getDoc(userRef);
+        const userRef = doc(this.firestore, 'users', user.uid); // get the specified document with the following id  
+        const userSnap = await getDoc(userRef); // 
 
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
+        if (userSnap.exists()) { // initialize the userdata
+          const userData = userSnap.data(); 
           this.userRole = userData['role'];
           this.userName = userData['username'];
 
-          if (this.userRole === 'student') {
-            await this.fetchRegisteredCourses(
+          if (this.userRole === 'student') { // take the courses that the admin assigned to it 
+            await this.fetchRegisteredCourses(  
               userData['registeredCourses'],
               user.uid
             );
           }
 
-          if (this.userRole === 'instructor') {
+          if (this.userRole === 'instructor') { 
             await this.fetchInstructorCourses(user.uid);
           }
         }
@@ -62,7 +62,7 @@ export class UserPageComponent implements OnInit {
   }
 
   async fetchRegisteredCourses(courseIds: string[], userId: string) {
-    const progressPromises = courseIds.map((courseId: string) => {
+    const progressPromises = courseIds.map((courseId: string) => { 
       return (async () => {
         const progressQuery = query(
           collection(this.firestore, 'studentProgress'),
@@ -81,14 +81,14 @@ export class UserPageComponent implements OnInit {
           const progressDocRef = progressSnap.docs[0].ref;
           const progressData = progressSnap.docs[0].data();
 
-          watchedLecturesCount = progressData['watchedLectures']
+          watchedLecturesCount = progressData['watchedLectures'] // if he watches lectures --> bne3rf 3ddha 
             ? progressData['watchedLectures'].length
             : 0;
           grade = progressData['grade'] || 'N/A';
 
           const progressPercentage =
             totalLectures > 0
-              ? ((watchedLecturesCount / totalLectures) * 100).toFixed(0) + '%'
+              ? ((watchedLecturesCount / totalLectures) * 100).toFixed(0) + '%'  // calculate progress 
               : '0%';
 
           console.log({
@@ -99,11 +99,11 @@ export class UserPageComponent implements OnInit {
           });
 
           // Update the progress field in Firestore
-          await updateDoc(progressDocRef, {
+          await updateDoc(progressDocRef, {  // update progress 
             progress: progressPercentage,
           });
 
-          return {
+          return {  // return documnet 
             courseId,
             courseTitle,
             progress: progressPercentage,
@@ -122,11 +122,11 @@ export class UserPageComponent implements OnInit {
       })();
     });
 
-    this.registeredCourses = (await Promise.all(progressPromises)).flat();
+    this.registeredCourses = (await Promise.all(progressPromises)).flat();  // transform the nested arrays into one array 
   }
 
   async getCourseTitle(courseId: string): Promise<string> {
-    const courseRef = doc(this.firestore, 'courses', courseId);
+    const courseRef = doc(this.firestore, 'courses', courseId); // point to the record of the courses 
     const courseSnap = await getDoc(courseRef);
     return courseSnap.exists() ? courseSnap.data()['title'] : 'Unknown Course';
   }
