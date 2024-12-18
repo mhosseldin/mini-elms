@@ -21,11 +21,22 @@ import { Auth } from '@angular/fire/auth';
 import { NgFor, NgForOf, NgIf } from '@angular/common';
 import { NgModel, FormsModule } from '@angular/forms';
 import { Course, User } from '../types';
+import { RegisterComponent } from '../auth/register/register.component';
+import { ModalComponent } from '../components/modal/modal.component';
+import { AddUserComponent } from './add-user/add-user.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [NgIf, NgFor, NgForOf, FormsModule],
+  imports: [
+    NgIf,
+    NgFor,
+    NgForOf,
+    FormsModule,
+    RegisterComponent,
+    ModalComponent,
+    AddUserComponent,
+  ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],
 })
@@ -38,6 +49,8 @@ export class AdminDashboardComponent implements OnInit {
   isLoading = true;
   courses: Course[] = [];
   users: User[] = [];
+
+  isRegisterModalOpen = false;
 
   ngOnInit() {
     const currentUser = this.auth.currentUser;

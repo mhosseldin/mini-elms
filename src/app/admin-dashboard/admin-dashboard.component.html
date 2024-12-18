@@ -114,7 +114,7 @@
   <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
     <h2 class="text-2xl font-semibold mb-4">User Management</h2>
     <button
-      (click)="navigateToRegister()"
+      (click)="isRegisterModalOpen = true"
       class="bg-green-500 text-white px-4 py-2 rounded mb-4"
     >
       Add User
@@ -145,3 +145,10 @@
     </table>
   </div>
 </div>
+
+<app-modal
+  [showModal]="isRegisterModalOpen"
+  (closeModal)="isRegisterModalOpen = false"
+>
+  <app-add-user (formSubmit)="isRegisterModalOpen = false"></app-add-user>
+</app-modal>
